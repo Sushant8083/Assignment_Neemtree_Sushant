@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add From Excel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .custom-file-upload {
+      display: inline-block;
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 5px;
+    }
+
+    .custom-file-upload input[type="file"] {
+      display: none;
+    }
+
+    button[type="submit"] {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #selectedFileName {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    #message {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+
+    .tick-sign {
+      font-size: 24px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <h1>Add Candidate to Database</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="excelFile" class="custom-file-upload">
+        <input type="file" id="excelFile" accept=".xlsx, .xls" required>
+        <span>Upload xls or xlsx file here</span>
+      </label>
+      <button type="submit">
+        <img src="upload_icon.png" alt="Upload Icon">
+      </button>
+    </form>
+    <p id="selectedFileName"></p>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    const messageElement = document.getElementById('message');
+    const selectedFileNameElement = document.getElementById('selectedFileName');
+    const container = document.getElementById('container');
+    const uploadForm = document.getElementById('uploadForm');
+    const excelFileInput = document.getElementById('excelFile');
+
+    excelFileInput.addEventListener('change', () => {
+      selectedFileNameElement.textContent = 'Selected file: ' + excelFileInput.files[0].name;
+    });
+
+    uploadForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!excelFileInput.files[0]) {
+        alert('Please select a file.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('excelFile', excelFileInput.files[0]);
+
+      try {
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          container.innerHTML = '<p class="tick-sign">&#10004;</p><p id="message">Thank You! File uploaded successfully.</p>';
+        } else {
+          messageElement.textContent = 'An error occurred during upload.';
+        }
+      } catch (error) {
+        console.error(error);
+        messageElement.textContent = 'An error occurred during upload.';
+      }
+    });
+  </script>
+</body>
+</html>
