@@ -20,7 +20,7 @@ const addCandidateFromRow = async (rowData) => {
   try {
     const candidateData = {};
     for (const [column, field] of Object.entries(columnToFieldMapping)) {
-      const columnIndex = column.charCodeAt(0) - 65; // Convert column letter to index
+      const columnIndex = column.charCodeAt(0) - 64; // Convert column letter to index
       candidateData[field] = rowData[columnIndex];
     }
 
