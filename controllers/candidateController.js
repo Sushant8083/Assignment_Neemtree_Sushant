@@ -24,13 +24,16 @@ const addCandidateFromRow = async (rowData) => {
       candidateData[field] = rowData[columnIndex];
     }
 
-    const candidate = new Candidate(candidateData);
-    await candidate.save();
-  } catch (error) {
-    if (error.code === 11000 && error.keyPattern && error.keyPattern.email === 1) {
-      // Duplicate email key error
+    // Check for duplicate email in the database
+    const existingCandidate = await Candidate.findOne({ email: candidateData.email });
+    if (existingCandidate) {
       return { success: false, message: 'Email already exists' };
     }
+
+    const candidate = new Candidate(candidateData);
+    await candidate.save();
+    return { success: true };
+  } catch (error) {
     throw error;
   }
 };
